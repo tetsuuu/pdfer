@@ -1,0 +1,35 @@
+version: "3"
+services:
+  db:
+    build:
+      context: ./
+      dockerfile: local/db/Dockerfile
+    container_name: db
+    ports:
+      - 5442:5432
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=pdfer
+
+  app:
+    build:
+      context: ./
+      dockerfile: local/app/Dockerfile
+    container_name: app
+    depends_on:
+      - db
+    ports:
+      - 8080:8080
+    volumes:
+      - target:/src/target
+      - cargo-registry:/root/.cargo/registry
+      - cargo-bin:/root/.cargo/bin
+      - .:/src
+    environment:
+      - RUST_LOG=debug,sqlx=warn,hyper=warn,tracing=info
+      - DATABASE_URL=postgres://root:password@db/pdfer
+
+volumes:
+  cargo-bin:
+  cargo-registry:
