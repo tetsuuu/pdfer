@@ -30,6 +30,14 @@ services:
       - RUST_LOG=debug,sqlx=warn,hyper=warn,tracing=info
       - DATABASE_URL=postgres://root:password@db/pdfer
 
+  s3:
+    image: localstack/localstack:0.14.3.1
+    ports:
+      - 4566:4566
+    environment:
+      - DEFAULT_REGION=ap-northeast-1
+      - SERVICES=s3
+
 volumes:
   cargo-bin:
   cargo-registry:
